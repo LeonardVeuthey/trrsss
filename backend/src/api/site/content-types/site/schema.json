@@ -1,0 +1,18 @@
+{
+  "kind": "singleType",
+  "collectionName": "sites",
+  "info": {
+    "singularName": "site",
+    "pluralName": "sites",
+    "displayName": "Site"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "color_hex": {
+      "type": "string"
+    }
+  }
+}

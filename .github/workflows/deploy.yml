@@ -1,0 +1,255 @@
+name: Deploy to Infomaniak (Monorepo)
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch: # Permet le déclenchement manuel
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    name: Deploy Strapi Backend to Infomaniak
+
+    steps:
+      - name: Checkout (pour les informations de version)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+
+      - name: Get version info
+        id: version
+        run: |
+          echo "commit_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "commit_date=$(git log -1 --format='%cd' --date=short)" >> $GITHUB_OUTPUT
+          echo "deploy_time=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
+
+      - name: SSH deploy backend
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script_stop: true
+          script: |
+            set -e
+            
+            echo "🚀 Déploiement Strapi démarré..."
+            echo "📅 Date: ${{ steps.version.outputs.deploy_time }}"
+            echo "🔗 Commit: ${{ steps.version.outputs.commit_sha }}"
+            
+            # Dossier de l'app sur le serveur
+            APP_DIR="${{ secrets.REMOTE_PATH }}"
+            echo "📁 Dossier app: $APP_DIR"
+            
+            # 1) Prépare le dossier
+            mkdir -p "$APP_DIR"
+            cd "$APP_DIR"
+            
+            # 2) Sauvegarde des fichiers sensibles
+            echo "💾 Sauvegarde des fichiers sensibles..."
+            if [ -f ".env" ]; then
+              cp .env .env.backup.$(date +%Y%m%d_%H%M%S)
+            fi
+            if [ -d "public/uploads" ]; then
+              echo "📁 Sauvegarde uploads..."
+            fi
+            
+            # 3) Git operations
+            echo "📥 Mise à jour du code..."
+            if [ -d ".git" ]; then
+              git fetch --all
+              git reset --hard origin/main
+              git clean -fd
+            else
+              git clone --branch main ${{ secrets.GIT_REPO_URL }} .
+            fi
+            
+            # 4) Aller dans le dossier backend
+            cd backend
+            
+            # 5) Restauration des fichiers sensibles
+            echo "🔄 Restauration des fichiers sensibles..."
+            if [ -f ".env.backup."* ]; then
+              cp .env.backup.* .env
+              echo "✅ .env restauré"
+            fi
+            if [ ! -f ".env" ]; then
+              echo "⚠️  Aucun fichier .env trouvé - veuillez le créer manuellement"
+            fi
+            
+            # 6) Création des dossiers nécessaires
+            echo "📁 Création des dossiers..."
+            mkdir -p public/uploads
+            mkdir -p logs
+            mkdir -p .tmp
+            
+            # 7) Installation des dépendances
+            echo "📦 Installation des dépendances..."
+            npm ci --omit=dev --no-audit
+            
+            # 8) Build Strapi (admin)
+            echo "🔨 Build de l'admin Strapi..."
+            npm run build
+            
+            # 9) Permissions
+            echo "🔐 Configuration des permissions..."
+            chmod 755 public/uploads
+            chmod 644 .env
+            
+            # 10) Démarrage / rechargement avec PM2
+            echo "🔄 Redémarrage PM2..."
+            if pm2 describe "${PM2_APP_NAME:-strapi-app}" > /dev/null 2>&1; then
+              echo "🔄 Rechargement de l'application..."
+              pm2 reload ecosystem.config.js --update-env
+            else
+              echo "🚀 Premier démarrage de l'application..."
+              pm2 start ecosystem.config.js
+            fi
+            
+            # 11) Sauvegarde de la configuration PM2
+            pm2 save
+            
+            # 12) Nettoyage des sauvegardes
+            rm -f .env.backup.*
+            
+            echo "✅ Déploiement backend terminé avec succès !"
+            echo "📊 Status PM2:"
+            pm2 status
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    name: Deploy Frontend to Infomaniak
+    needs: deploy-backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Create deployment package
+        run: |
+          cd frontend
+          tar -czf ../frontend-build.tar.gz build/
+
+      - name: Upload build to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "frontend-build.tar.gz"
+          target: "${{ secrets.REMOTE_PATH }}"
+
+      - name: Deploy frontend on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script_stop: true
+          script: |
+            set -e
+            
+            echo "🚀 Déploiement Frontend démarré..."
+            
+            # Dossier de l'app sur le serveur
+            APP_DIR="${{ secrets.REMOTE_PATH }}"
+            FRONTEND_DIR="$APP_DIR/frontend"
+            
+            echo "📁 Dossier frontend: $FRONTEND_DIR"
+            
+            # 1) Prépare le dossier frontend
+            mkdir -p "$FRONTEND_DIR"
+            cd "$FRONTEND_DIR"
+            
+            # 2) Nettoyer l'ancien build
+            rm -rf build dist .svelte-kit
+            
+            # 3) Extraire le nouveau build
+            cd "$APP_DIR"
+            tar -xzf frontend-build.tar.gz
+            rm frontend-build.tar.gz
+            
+            # 4) Configuration du serveur web
+            echo "🌐 Configuration du serveur web..."
+            
+            # Créer un fichier .htaccess pour Apache
+            cat > "$FRONTEND_DIR/.htaccess" << 'EOF'
+            RewriteEngine On
+            RewriteBase /
+            
+            # Gérer les routes SvelteKit
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule ^(.*)$ /index.html [L]
+            
+            # Cache statique
+            <FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+                ExpiresActive On
+                ExpiresDefault "access plus 1 year"
+            </FilesMatch>
+            
+            # Compression
+            <IfModule mod_deflate.c>
+                AddOutputFilterByType DEFLATE text/plain
+                AddOutputFilterByType DEFLATE text/html
+                AddOutputFilterByType DEFLATE text/xml
+                AddOutputFilterByType DEFLATE text/css
+                AddOutputFilterByType DEFLATE application/xml
+                AddOutputFilterByType DEFLATE application/xhtml+xml
+                AddOutputFilterByType DEFLATE application/rss+xml
+                AddOutputFilterByType DEFLATE application/javascript
+                AddOutputFilterByType DEFLATE application/x-javascript
+            </IfModule>
+            EOF
+            
+            # 5) Permissions
+            chmod -R 755 "$FRONTEND_DIR"
+            
+            echo "✅ Déploiement frontend terminé !"
+            echo "🌐 Frontend accessible sur: https://votre-domaine.com"
+
+      - name: Deploy success notification
+        if: success()
+        run: |
+          echo "🎉 Déploiement complet réussi !"
+          echo "🔗 Commit: ${{ steps.version.outputs.commit_sha }}"
+          echo "📅 Date: ${{ steps.version.outputs.deploy_time }}"
+          echo "✅ Backend: Strapi déployé et démarré"
+          echo "✅ Frontend: SvelteKit déployé"
+
+      - name: Deploy failure notification
+        if: failure()
+        run: |
+          echo "❌ Déploiement échoué !"
+          echo "🔗 Commit: ${{ steps.version.outputs.commit_sha }}"
+          echo "📅 Date: ${{ steps.version.outputs.deploy_time }}"

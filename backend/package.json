@@ -1,0 +1,55 @@
+{
+  "name": "backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A Strapi application",
+  "scripts": {
+    "dev": "strapi develop",
+    "develop": "strapi develop",
+    "build": "strapi build",
+    "start": "strapi start",
+    "console": "strapi console",
+    "strapi": "strapi",
+    "deploy": "strapi deploy",
+    "upgrade": "npx @strapi/upgrade latest",
+    "upgrade:dry": "npx @strapi/upgrade latest --dry",
+    "postinstall": "node -e \"console.log('✅ Postinstall OK - Strapi ready')\"",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:reload": "pm2 reload ecosystem.config.js --update-env",
+    "pm2:restart": "pm2 restart ecosystem.config.js",
+    "pm2:stop": "pm2 stop ecosystem.config.js",
+    "pm2:delete": "pm2 delete ecosystem.config.js",
+    "pm2:logs": "pm2 logs --lines 100",
+    "pm2:status": "pm2 status",
+    "pm2:save": "pm2 save",
+    "setup:logs": "mkdir -p logs",
+    "clean": "rm -rf .cache .build .tmp build dist",
+    "clean:all": "npm run clean && rm -rf node_modules package-lock.json",
+    "generate:keys": "node scripts/generate-keys.js",
+    "setup:env": "cp .env.example .env && echo '✅ Fichier .env créé. Veuillez le configurer.'"
+  },
+  "dependencies": {
+    "@strapi/plugin-cloud": "5.18.0",
+    "@strapi/plugin-users-permissions": "5.18.0",
+    "@strapi/strapi": "5.18.0",
+    "better-sqlite3": "11.3.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "styled-components": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=22.x.x",
+    "npm": ">=6.0.0"
+  },
+  "strapi": {
+    "uuid": "b4451077-01dc-42cf-bdb8-34ead3cb0ebb",
+    "installId": "a4955b9e866ebefb8393e72408c30c468d3f50955814187f7886c00971119b05"
+  }
+}

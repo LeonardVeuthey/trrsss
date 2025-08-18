@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "membres",
+  "info": {
+    "singularName": "membre",
+    "pluralName": "membres",
+    "displayName": "Membre"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "nom": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "lien_projet": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "instagram": {
+      "type": "string"
+    }
+  }
+}

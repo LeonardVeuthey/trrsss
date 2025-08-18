@@ -1,0 +1,135 @@
+name: Deploy to Infomaniak (Strapi)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Permet le déclenchement manuel
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy Strapi to Infomaniak
+
+    steps:
+      - name: Checkout (pour les informations de version)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+
+      - name: Get version info
+        id: version
+        run: |
+          echo "commit_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "commit_date=$(git log -1 --format='%cd' --date=short)" >> $GITHUB_OUTPUT
+          echo "deploy_time=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
+
+      - name: SSH deploy (git pull + build + pm2 reload)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script_stop: true
+          script: |
+            set -e
+            
+            echo "🚀 Déploiement Strapi démarré..."
+            echo "📅 Date: ${{ steps.version.outputs.deploy_time }}"
+            echo "🔗 Commit: ${{ steps.version.outputs.commit_sha }}"
+            
+            # Dossier de l'app sur le serveur
+            APP_DIR="${{ secrets.REMOTE_PATH }}"
+            echo "📁 Dossier app: $APP_DIR"
+            
+            # 1) Prépare le dossier
+            mkdir -p "$APP_DIR"
+            cd "$APP_DIR"
+            
+            # 2) Sauvegarde des fichiers sensibles
+            echo "💾 Sauvegarde des fichiers sensibles..."
+            if [ -f ".env" ]; then
+              cp .env .env.backup.$(date +%Y%m%d_%H%M%S)
+            fi
+            if [ -d "public/uploads" ]; then
+              echo "📁 Sauvegarde uploads..."
+            fi
+            
+            # 3) Git operations
+            echo "📥 Mise à jour du code..."
+            if [ -d ".git" ]; then
+              git fetch --all
+              git reset --hard origin/main
+              git clean -fd
+            else
+              git clone --branch main ${{ secrets.GIT_REPO_URL }} .
+            fi
+            
+            # 4) Restauration des fichiers sensibles
+            echo "🔄 Restauration des fichiers sensibles..."
+            if [ -f ".env.backup."* ]; then
+              cp .env.backup.* .env
+              echo "✅ .env restauré"
+            fi
+            if [ ! -f ".env" ]; then
+              echo "⚠️  Aucun fichier .env trouvé - veuillez le créer manuellement"
+            fi
+            
+            # 5) Création des dossiers nécessaires
+            echo "📁 Création des dossiers..."
+            mkdir -p public/uploads
+            mkdir -p logs
+            mkdir -p .tmp
+            
+            # 6) Installation des dépendances
+            echo "📦 Installation des dépendances..."
+            npm ci --omit=dev --no-audit
+            
+            # 7) Build Strapi (admin)
+            echo "🔨 Build de l'admin Strapi..."
+            npm run build
+            
+            # 8) Permissions
+            echo "🔐 Configuration des permissions..."
+            chmod 755 public/uploads
+            chmod 644 .env
+            
+            # 9) Démarrage / rechargement avec PM2
+            echo "🔄 Redémarrage PM2..."
+            if pm2 describe "${PM2_APP_NAME:-strapi-app}" > /dev/null 2>&1; then
+              echo "🔄 Rechargement de l'application..."
+              pm2 reload ecosystem.config.js --update-env
+            else
+              echo "🚀 Premier démarrage de l'application..."
+              pm2 start ecosystem.config.js
+            fi
+            
+            # 10) Sauvegarde de la configuration PM2
+            pm2 save
+            
+            # 11) Nettoyage des sauvegardes
+            rm -f .env.backup.*
+            
+            echo "✅ Déploiement terminé avec succès !"
+            echo "📊 Status PM2:"
+            pm2 status
+
+      - name: Deploy success notification
+        if: success()
+        run: |
+          echo "🎉 Déploiement réussi !"
+          echo "🔗 Commit: ${{ steps.version.outputs.commit_sha }}"
+          echo "📅 Date: ${{ steps.version.outputs.deploy_time }}"
+
+      - name: Deploy failure notification
+        if: failure()
+        run: |
+          echo "❌ Déploiement échoué !"
+          echo "🔗 Commit: ${{ steps.version.outputs.commit_sha }}"
+          echo "📅 Date: ${{ steps.version.outputs.deploy_time }}"

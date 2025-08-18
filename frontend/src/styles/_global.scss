@@ -1,0 +1,34 @@
+@use './_variables.scss' as *;
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/InterVariable.woff2') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+body {
+  font-family: $font-main;
+  color: $color-primary;
+  background: $color-bg;
+  margin: 0;
+  padding: 0;
+  color: #222;
+}
+
+p,h1,h2,h3,h4,h5,h6,address,time {
+  color: $color-primary;
+  line-height: 1.2;
+  font-weight: 400;
+} 
+
+::-webkit-scrollbar {
+  width: 12px;
+  background: #eee;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: $color-primary;
+  border-radius: 8px;
+} 
+

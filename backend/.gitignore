@@ -1,0 +1,102 @@
+# --- Node.js ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.pnp.*
+.npm
+.eslintcache
+
+# Ne PAS ignorer les fichiers de lock !
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# --- Strapi v4/v5 ---
+.cache/
+.build/
+.tmp/
+build/           # build de l'admin (Strapi)
+.strapi/
+dist/
+.strapi-updater.json
+.strapi-cloud.json
+
+# --- Environnements ---
+.env
+.env.*
+!.env.example
+
+# --- Base de données locale (SQLite) ---
+*.db
+*.sqlite
+*.sqlite3
+data/**
+database/**
+.tmp/data/**
+**/data.db
+
+# --- Uploads côté serveur (ne jamais les pousser) ---
+public/uploads/
+!public/uploads/.gitkeep
+
+# --- Logs & PIDs ---
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# --- Tests/coverage ---
+coverage/
+.nyc_output/
+
+# --- OS / éditeur ---
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+.Spotlight-V100
+.Trashes
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# --- Packages/Archives ---
+*.7z
+*.csv
+*.dat
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.swo
+*.swp
+*.swn
+*.swm
+*.out
+
+# --- Autres ---
+*#
+ssl
+nbproject
+exports
+license.txt

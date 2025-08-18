@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "actualitees",
+  "info": {
+    "singularName": "actualitee",
+    "pluralName": "actualitees",
+    "displayName": "Actualitee"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "date": {
+      "type": "date"
+    },
+    "titre": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "texte": {
+      "type": "blocks"
+    },
+    "lien": {
+      "type": "string"
+    },
+    "nom_bouton": {
+      "type": "string"
+    }
+  }
+}

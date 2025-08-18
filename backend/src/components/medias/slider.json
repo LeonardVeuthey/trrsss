@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_medias_sliders",
+  "info": {
+    "displayName": "slider"
+  },
+  "options": {},
+  "attributes": {
+    "medias": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "url_video": {
+      "type": "string"
+    },
+    "legende": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,27 @@
+@use './_variables.scss' as *;
+@use 'sass:color';
+
+.oval-button {
+  border-radius: 999px;
+  background: $color-primary;
+  color: #fff;
+  padding: 12px 32px;
+  border: none;
+  font-size: $font-size-md;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover {
+    background: color.adjust($color-primary, $lightness: -10%);
+  }
+}
+
+.tag {
+  display: inline-block;
+  border-radius: 999px;
+  background: $color-primary;
+  color: #fff;
+  padding: 8px 24px;
+  margin: 4px;
+  font-size: $font-size-md;
+  cursor: pointer;
+} 
