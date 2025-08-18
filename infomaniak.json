@@ -1,0 +1,15 @@
+{
+  "name": "trrsss",
+  "type": "nodejs",
+  "build": {
+    "command": "cd frontend && npm install && npm run build",
+    "output": "frontend/build"
+  },
+  "deploy": {
+    "source": "frontend/build",
+    "destination": "/"
+  },
+  "environment": {
+    "NODE_ENV": "production"
+  }
+}
