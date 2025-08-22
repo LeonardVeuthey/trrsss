@@ -2,7 +2,7 @@
   "name": "trrsss",
   "type": "nodejs",
   "build": {
-    "command": "cd frontend && npm install && npm run build",
+    "command": "npm install && npm run build",
     "output": "frontend/build"
   },
   "deploy": {

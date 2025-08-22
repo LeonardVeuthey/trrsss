@@ -1,0 +1,12 @@
+{
+	"name": "trrsss-monorepo",
+	"private": true,
+	"version": "1.0.0",
+	"scripts": {
+		"postinstall": "cd backend && npm ci --omit=dev --no-audit && cd ../frontend && npm ci --no-audit",
+		"build": "cd backend && npm run build && cd ../frontend && npm run build",
+		"start": "cd backend && pm2 start ecosystem.config.js || pm2 reload ecosystem.config.js --update-env && pm2 save"
+	}
+}
+
+
