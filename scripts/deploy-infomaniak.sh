@@ -10,10 +10,10 @@ echo "🧹 Nettoyage des node_modules..."
 cd backend && rm -rf node_modules && cd ..
 cd frontend && rm -rf node_modules && cd ..
 
-# 2. Installation des dépendances backend avec npm ci
+# 2. Installation des dépendances backend avec toutes les dépendances
 echo "📦 Installation des dépendances backend..."
 cd backend
-npm ci --omit=dev --no-audit --no-fund
+npm ci --no-audit --no-fund
 cd ..
 
 # 3. Build du backend
@@ -22,7 +22,7 @@ cd backend
 npm run build
 cd ..
 
-# 4. Installation des dépendances frontend avec npm ci
+# 4. Installation des dépendances frontend
 echo "📦 Installation des dépendances frontend..."
 cd frontend
 npm ci --no-audit --no-fund
