@@ -5,30 +5,34 @@ set -e
 echo "🚀 Déploiement Infomaniak - Monorepo TRRSSS"
 echo "=============================================="
 
-# 1. Nettoyage des node_modules seulement (garder package-lock.json)
-echo "🧹 Nettoyage des node_modules..."
-cd backend && rm -rf node_modules && cd ..
-cd frontend && rm -rf node_modules && cd ..
+# 1. Nettoyage du cache npm
+echo "🧹 Nettoyage du cache npm..."
+npm cache clean --force
 
-# 2. Installation des dépendances backend avec toutes les dépendances
+# 2. Nettoyage complet pour éviter les conflits
+echo "🧹 Nettoyage complet..."
+cd backend && rm -rf node_modules package-lock.json && cd ..
+cd frontend && rm -rf node_modules package-lock.json && cd ..
+
+# 3. Installation des dépendances backend avec npm install
 echo "📦 Installation des dépendances backend..."
 cd backend
-npm ci --no-audit --no-fund
+npm install --no-audit --no-fund --legacy-peer-deps
 cd ..
 
-# 3. Build du backend
+# 4. Build du backend
 echo "🔨 Build du backend Strapi..."
 cd backend
 npm run build
 cd ..
 
-# 4. Installation des dépendances frontend
+# 5. Installation des dépendances frontend
 echo "📦 Installation des dépendances frontend..."
 cd frontend
-npm ci --no-audit --no-fund
+npm install --no-audit --no-fund --legacy-peer-deps
 cd ..
 
-# 5. Build du frontend
+# 6. Build du frontend
 echo "🔨 Build du frontend SvelteKit..."
 cd frontend
 npm run build
