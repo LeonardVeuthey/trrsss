@@ -1,6 +1,7 @@
 <script>
   import TagFilter from '../../components/TagFilter.svelte';
   import ProjectCard from '../../components/ProjectCard.svelte';
+  import SEO from '../../components/SEO.svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { writable } from 'svelte/store';
@@ -74,6 +75,10 @@
       // Construction des paramètres de requête pour les projets
       let projectsParams = `?populate=*&pagination[limit]=${data.pagination.limit}&pagination[start]=${nextStart}&pagination[withCount]=true&sort[0]=nom:asc`;
       
+      // Ajout du filtre pour exclure les projets cachés (projet_cache = true)
+      // On inclut les projets avec projet_cache = false OU projet_cache = null/undefined
+      projectsParams += `&filters[$or][0][projet_cache][$eq]=false&filters[$or][1][projet_cache][$null]=true`;
+      
       // Ajout du filtre par tag si spécifié
       if (data.currentTag && data.currentTag !== '') {
         projectsParams += `&filters[tags][tag][$eq]=${data.currentTag}`;
@@ -111,6 +116,12 @@
     }
   }
 </script>
+
+<SEO 
+	title={data?.site?.seo_projets_metatitle || 'Projets - Territoires Sensibles'}
+	description={data?.site?.seo_projets_metadescription || ''}
+	favicon={data?.site?.seo_favicon?.url || ''}
+/>
 
 <div class="projects">
   <div class="projects_tags">
@@ -152,7 +163,7 @@
   
   {#if data.pagination.hasMore}
     <button class="oval-button load-more" on:click={loadMore}>
-      Charger plus ({data.pagination.totalCount - (data.pagination.start + data.pagination.limit)} restants)
+      Charger plus
     </button>
   {/if}
 </div>
@@ -177,6 +188,29 @@
     gap: 60px 30px;
 
   }
+  
+  @media (max-width: 991px) {
+    .projects-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 30px 15px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .projects-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 475px) {
+    .projects-list {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+  }
+
   .load-more {
     display: block;
     margin: 0 auto;
@@ -268,5 +302,15 @@
 .tous.active .tous_text {
   font-weight: 600;
 }
+
+
+
+@media (max-width: 768px) {
+  .projects_tags_text {
+    font-size: $font-size-sm;
+  }
+
+}
+
 
 </style> 

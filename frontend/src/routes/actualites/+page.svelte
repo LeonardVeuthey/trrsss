@@ -1,4 +1,5 @@
 <script>
+  import SEO from '../../components/SEO.svelte';
   export let data;
   
   // Debug: afficher la structure des données
@@ -33,6 +34,12 @@
     }).join(' ').trim();
   }
 </script>
+
+<SEO 
+	title={data?.site?.seo_actualites_metatitle || 'Actualités - Territoires Sensibles'}
+	description={data?.site?.seo_actualites_metadescription || ''}
+	favicon={data?.site?.seo_favicon?.url || ''}
+/>
   
   <main>
     <div class="actualites">
@@ -180,6 +187,10 @@
   &:hover {
     background: #1a23b8;
     color: #fff;
+
+    p {
+      color: #fff;
+    }
   }
 }
 
@@ -248,10 +259,10 @@
     min-height: unset;
   }
   
-      .actualite_image {
+  .actualite_image {
     max-width: 100%;
     min-height: 180px;
-    height: 180px;
+
   }
   
   .actualite_content {
@@ -262,20 +273,20 @@
   .actualite_meta {
     flex-direction: column;
     align-items: flex-start;
+    gap: 15px;
     
     .actualite_date { 
-      font-size: 20px; 
+      font-size: $font-size-sm; 
     }
     
     .actualite_title { 
-      font-size: 32px; 
       margin: 0; 
       white-space: normal;
     }
   }
   
   .actualite_description { 
-    font-size: 20px; 
+    font-size: $font-size-sm; 
   }
   
   .actualite_link { 

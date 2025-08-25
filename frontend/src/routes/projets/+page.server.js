@@ -6,7 +6,16 @@ export const load = async ({ url }) => {
   // Récupération des paramètres URL
   const tag = url.searchParams.get('tag');
   const start = parseInt(url.searchParams.get('start') || '0');
-  const limit = 5;
+  const limit = 25;
+  
+  // Récupération des données du site pour le SEO
+  let siteData = {};
+  try {
+    const siteRes = await fetchStrapi('/site?populate=*');
+    siteData = siteRes.data || {};
+  } catch (error) {
+    console.error('❌ Error loading site data:', error);
+  }
   
   console.log('📋 URL params - tag:', tag, 'start:', start, 'limit:', limit);
   
@@ -51,6 +60,10 @@ export const load = async ({ url }) => {
     // Construction des paramètres de requête pour les projets
     let projectsParams = `?populate=*&pagination[limit]=${limit}&pagination[start]=${start}&pagination[withCount]=true&sort[0]=nom:asc`;
     
+    // Ajout du filtre pour exclure les projets cachés (projet_cache = true)
+    // On inclut les projets avec projet_cache = false OU projet_cache = null/undefined
+    projectsParams += `&filters[$or][0][projet_cache][$eq]=false&filters[$or][1][projet_cache][$null]=true`;
+    
     // Ajout du filtre par tag si spécifié (seulement si un tag est sélectionné)
     if (tag && tag !== '') {
       // Essayer d'abord avec le nom du tag
@@ -72,7 +85,7 @@ export const load = async ({ url }) => {
       // Trouver l'ID du tag sélectionné
       const selectedTag = availableTags.find(t => t.tag === tag);
       if (selectedTag) {
-        let projectsParamsWithId = `?populate=*&pagination[limit]=${limit}&pagination[start]=${start}&pagination[withCount]=true&sort[0]=nom:asc&filters[tags][id][$eq]=${selectedTag.id}`;
+        let projectsParamsWithId = `?populate=*&pagination[limit]=${limit}&pagination[start]=${start}&pagination[withCount]=true&sort[0]=nom:asc&filters[$or][0][projet_cache][$eq]=false&filters[$or][1][projet_cache][$null]=true&filters[tags][id][$eq]=${selectedTag.id}`;
         console.log('🔍 Trying with tag ID:', selectedTag.id);
         console.log('🔍 Projects params with ID filter:', projectsParamsWithId);
         
@@ -107,7 +120,8 @@ export const load = async ({ url }) => {
         start,
         limit
       },
-      currentTag: tag
+      currentTag: tag,
+      site: siteData
     };
     
     console.log('✅ Load function - returning:', result);
@@ -123,7 +137,8 @@ export const load = async ({ url }) => {
         start: 0,
         limit: 25
       },
-      currentTag: tag
+      currentTag: tag,
+      site: siteData
     };
   }
 }; 

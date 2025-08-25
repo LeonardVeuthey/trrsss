@@ -1,10 +1,17 @@
 <script>
   import Carte from '../../components/Carte.svelte';
+  import SEO from '../../components/SEO.svelte';
   export let data;
   
   console.log('📄 Carte page - data received:', data);
   console.log('📄 Carte page - data.projets:', data.projets);
 </script>
+
+<SEO 
+	title={data?.site?.seo_carte_metatitle || 'Carte - Territoires Sensibles'}
+	description={data?.site?.seo_carte_metadescription || ''}
+	favicon={data?.site?.seo_favicon?.url || ''}
+/>
 
 <div class="carte-page">
   <Carte />

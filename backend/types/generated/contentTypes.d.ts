@@ -565,6 +565,7 @@ export interface ApiProjetProjet extends Struct.CollectionTypeSchema {
     longitude: Schema.Attribute.Decimal;
     medias: Schema.Attribute.Component<'medias.slider', true>;
     nom: Schema.Attribute.String;
+    projet_cache: Schema.Attribute.Boolean;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'nom'>;
     tags: Schema.Attribute.Relation<'oneToMany', 'api::tag.tag'>;
@@ -593,6 +594,19 @@ export interface ApiSiteSite extends Struct.SingleTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::site.site'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    seo_actualites_metadescription: Schema.Attribute.Text;
+    seo_actualites_metatitle: Schema.Attribute.String;
+    seo_carte_metadescription: Schema.Attribute.Text;
+    seo_carte_metatitle: Schema.Attribute.String;
+    seo_favicon: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios'
+    >;
+    seo_home_metadescription: Schema.Attribute.Text;
+    seo_home_metatitle: Schema.Attribute.String;
+    seo_nous_metadescription: Schema.Attribute.Text;
+    seo_nous_metatitle: Schema.Attribute.String;
+    seo_projets_metadescription: Schema.Attribute.Text;
+    seo_projets_metatitle: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

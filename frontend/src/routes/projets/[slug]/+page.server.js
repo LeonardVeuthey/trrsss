@@ -6,6 +6,15 @@ export const load = async ({ params }) => {
   console.log('🔧 Params:', params);
   console.log('🔧 Slug recherché:', params.slug);
   
+  // Récupération des données du site pour le SEO
+  let siteData = {};
+  try {
+    const siteRes = await fetchStrapi('/site?populate=*');
+    siteData = siteRes.data || {};
+  } catch (error) {
+    console.error('❌ Error loading site data:', error);
+  }
+  
   // Log immédiat pour vérifier que la fonction est appelée
   console.log('🔍 Début de la recherche du projet...');
   
@@ -30,7 +39,7 @@ export const load = async ({ params }) => {
     console.log('📥 Projet trouvé par slug:', projectBySlug);
     
     if (projectBySlug) {
-      const result = { project: projectBySlug };
+      const result = { project: projectBySlug, site: siteData };
       console.log('✅ Load function - returning by slug:', result);
       return result;
     }
@@ -41,7 +50,7 @@ export const load = async ({ params }) => {
     console.log('📥 Projet trouvé par documentId:', project);
     
     if (project) {
-      const result = { project: project };
+      const result = { project: project, site: siteData };
       console.log('✅ Load function - returning by documentId:', result);
       return result;
     }
@@ -52,7 +61,7 @@ export const load = async ({ params }) => {
     console.log('📥 Projet trouvé par ID:', projectById);
     
     if (projectById) {
-      const result = { project: projectById };
+      const result = { project: projectById, site: siteData };
       console.log('✅ Load function - returning by ID:', result);
       return result;
     }
@@ -62,12 +71,13 @@ export const load = async ({ params }) => {
     console.log('🔍 DocumentIds disponibles:', allProjectsRes.data.map(p => p.documentId));
     console.log('🔍 Slugs disponibles:', allProjectsRes.data.map(p => p.slug));
     console.log('🔍 IDs disponibles:', allProjectsRes.data.map(p => p.id));
-    return { project: null };
+    return { project: null, site: siteData };
     
   } catch (error) {
     console.error('❌ Error loading projet detail:', error);
     return {
-      project: null
+      project: null,
+      site: siteData
     };
   }
 }; 

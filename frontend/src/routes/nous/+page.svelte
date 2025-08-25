@@ -1,5 +1,6 @@
 <script>
   import PersonCard from '../../components/PersonCard.svelte';
+  import SEO from '../../components/SEO.svelte';
   
   export let data;
   
@@ -14,6 +15,12 @@
     console.log('📄 Nous page - Premier membre attributes:', data.membres[0].attributes);
   }
 </script>
+
+<SEO 
+	title={data?.site?.seo_nous_metatitle || 'Nous - Territoires Sensibles'}
+	description={data?.site?.seo_nous_metadescription || ''}
+	favicon={data?.site?.seo_favicon?.url || ''}
+/>
 
 <div class="nous">
   <div class="team-description">
@@ -96,7 +103,6 @@
   font-size: $font-size-lg;
   cursor: pointer;
   transition: all 0.3s ease;
-  height: 60px;
   display: flex;
   
   &:hover {
@@ -119,12 +125,31 @@
 @media (max-width: 768px) {
   .nous {
     padding: 120px 15px;
-    
+
+    .nous_description {
+      font-size: 28px;
+    }
+
     .nous_list {
       grid-template-columns: repeat(1, 1fr);
       gap: 90px;
     }
+
+    .contact-block {
+      h2 {
+        font-size: $font-size-lg;
+      }
+      address { 
+        font-size: $font-size-sm;
+      }
+    }
+    .button {
+      font-size: $font-size-sm;
+    }
   }
+
+
+
 }
 
 

@@ -26,7 +26,7 @@
 
     const map = L.map(mapContainer, {
   center: [46.52033692800149, 6.630987170129743],
-  zoom: 10,
+  zoom: 9.3,
   zoomControl: false,
   maxZoom: 16,
   minZoom: 3,

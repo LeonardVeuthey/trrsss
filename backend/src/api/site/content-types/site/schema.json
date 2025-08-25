@@ -13,6 +13,46 @@
   "attributes": {
     "color_hex": {
       "type": "string"
+    },
+    "seo_favicon": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "seo_home_metatitle": {
+      "type": "string"
+    },
+    "seo_home_metadescription": {
+      "type": "text"
+    },
+    "seo_carte_metatitle": {
+      "type": "string"
+    },
+    "seo_carte_metadescription": {
+      "type": "text"
+    },
+    "seo_projets_metatitle": {
+      "type": "string"
+    },
+    "seo_projets_metadescription": {
+      "type": "text"
+    },
+    "seo_nous_metatitle": {
+      "type": "string"
+    },
+    "seo_nous_metadescription": {
+      "type": "text"
+    },
+    "seo_actualites_metatitle": {
+      "type": "string"
+    },
+    "seo_actualites_metadescription": {
+      "type": "text"
     }
   }
 }

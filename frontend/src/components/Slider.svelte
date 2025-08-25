@@ -32,6 +32,28 @@
           },
         },
         loop: true,
+        // Options pour mobile
+        touchRatio: 1,
+        touchAngle: 45,
+        grabCursor: true,
+        // Responsive breakpoints
+        breakpoints: {
+          // Mobile (jusqu'à 768px)
+          320: {
+            spaceBetween: 15,
+            touchRatio: 1.5,
+          },
+          // Tablette (768px - 1024px)
+          768: {
+            spaceBetween: 20,
+            touchRatio: 1.2,
+          },
+          // Desktop (1024px+)
+          1024: {
+            spaceBetween: 30,
+            touchRatio: 1,
+          }
+        }
       });
     }
   });
@@ -149,6 +171,7 @@
       </div>
       
       <!-- Navigation -->
+      <div class="prev">←</div>
       <div class="next">→</div>
       
       <!-- Pagination -->
@@ -234,7 +257,6 @@
 // Navigation buttons
 .next {
   color: $color-primary;
-
   font-size: 68px;
   font-weight: bold;
   cursor: pointer;
@@ -246,8 +268,18 @@
   right: 0px;
 }
 
-
-
+.prev {
+  color: $color-primary;
+  font-size: 68px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: calc(50% - 10px);
+  transform: translateY(-50%);
+  z-index: 1000;
+  left: 0px;
+}
 
 // Pagination
 .swiper-pagination {
@@ -267,23 +299,25 @@
   font-size: $font-size-lg;
 }
 
-// Responsive
-@media (max-width: 768px) {
-  .swiper-button-next,
-  .swiper-button-prev {
-    width: 35px;
-    height: 35px;
-    
-    &::after {
-      font-size: 14px;
-    }
+// Responsive styles
+// Tablette (768px - 1024px)
+@media (max-width: 991px) and (min-width: 769px) {
+  .slider-container {
+    max-width: 100%;
+    margin: 0 auto;
   }
   
-  .swiper-button-next {
+  .swiper {
+    height: calc(56.25vw + 50px); // 16/9 ratio (9/16 * 100)
+  }
+  
+  .next {
+    font-size: 48px;
     right: 10px;
   }
-  
-  .swiper-button-prev {
+
+  .prev {
+    font-size: 48px;
     left: 10px;
   }
   
@@ -291,6 +325,127 @@
     bottom: 10px;
     right: 10px;
     font-size: $font-size-sm;
+  }
+  
+  .legende {
+    font-size: $font-size-sm;
+  }
+  
+  .audio-container {
+    max-width: 300px;
+    padding: 15px;
+    
+    audio {
+      height: 80px;
+    }
+  }
+}
+
+// Smartphone (jusqu'à 768px)
+@media (max-width: 768px) {
+  .slider-container {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .swiper {
+    height: calc(56.25vw + 50px); // 16/9 ratio (9/16 * 100)
+  }
+  
+  .media-content {
+    gap: 12px;
+  }
+  
+  .media-element {
+    height: calc(100% - 50px);
+  }
+  
+  .next {
+    font-size: 36px;
+    right: 5px;
+    top: calc(50% - 8px);
+  }
+
+  .prev {
+    font-size: 36px;
+    left: 5px;
+    top: calc(50% - 8px);
+  }
+  
+  .swiper-pagination {
+    bottom: 5px;
+    right: 5px;
+    font-size: 16px;
+  }
+  
+  .legende {
+    font-size: 16px;
+    margin-top: 8px;
+  }
+  
+  .audio-container {
+    max-width: 250px;
+    padding: 10px;
+    
+    audio {
+      height: 60px;
+    }
+  }
+  
+  .no-media {
+    padding: 20px;
+    font-size: $font-size-md;
+  }
+}
+
+// Très petits écrans (jusqu'à 480px)
+@media (max-width: 480px) {
+  .swiper {
+    height: calc(56.25vw + 50px); // 16/9 ratio (9/16 * 100)
+  }
+  
+  .next {
+    font-size: 28px;
+    right: 2px;
+  }
+
+  .prev {
+    font-size: 28px;
+    left: 2px;
+  }
+  
+  .swiper-pagination {
+    font-size: 14px;
+  }
+  
+  .legende {
+    font-size: 14px;
+  }
+  
+  .audio-container {
+    max-width: 200px;
+    padding: 8px;
+    
+    audio {
+      height: 50px;
+    }
+  }
+}
+
+// Orientation paysage sur mobile
+@media (max-width: 768px) and (orientation: landscape) {
+  .swiper {
+    height: 56.25vw; // 16/9 ratio (9/16 * 100)
+    max-height: 250px; // Limite pour éviter que ce soit trop grand
+  }
+  
+  .media-content {
+    gap: 8px;
+  }
+  
+  .legende {
+    font-size: 14px;
+    margin-top: 4px;
   }
 }
 </style> 

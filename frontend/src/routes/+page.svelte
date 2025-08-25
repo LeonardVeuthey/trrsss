@@ -1,4 +1,5 @@
 <script>
+	import SEO from '../components/SEO.svelte';
 	export let data;
 	
 	// Debug: afficher la structure des données
@@ -17,6 +18,12 @@
 		}
 	}
 </script>
+
+<SEO 
+	title={data?.site?.seo_home_metatitle || 'Territoires Sensibles'}
+	description={data?.site?.seo_home_metadescription || ''}
+	favicon={data?.site?.seo_favicon?.url || ''}
+/>
 
 <div class="home-hero">
   <!-- Fond vidéo ou image -->

@@ -39,10 +39,20 @@
 @use '../styles/_variables.scss' as *;
 @use '../styles/_components.scss' as *;
 
+.projects-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
 .project-card {
   width: 300px;
   text-decoration: none;
   color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
   
   img {
     width: 100%;
@@ -69,5 +79,30 @@
   color: $color-primary;
   border-radius: 12px;
   border: 1px solid rgba($color-primary, 0.2);
+}
+
+@media (max-width: 991px) {
+  .project-card {
+    width: 100%;
+    img {
+      height: 19vw;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .project-card {
+    img {
+      height: 30vw;
+    }
+  }
+} 
+
+@media (max-width: 478px) {
+  .project-card {
+    img {
+      height: 53vw;
+    }
+  }
 }
 </style> 

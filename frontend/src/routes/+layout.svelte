@@ -13,6 +13,10 @@
 	export let data;
 	
 	onMount(() => {
+		// Debug des données du site
+		console.log('🔧 Layout - Site data:', data?.site);
+		console.log('🔧 Layout - Site favicon:', data?.site?.seo_favicon);
+		
 		// Appliquer la couleur de fond au body
 		if (data?.site?.color_hex) {
 			applyBackgroundColor(data.site.color_hex);

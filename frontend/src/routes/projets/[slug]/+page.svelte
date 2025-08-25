@@ -1,5 +1,6 @@
 <script>
   import Slider from '../../../components/Slider.svelte';
+  import SEO from '../../../components/SEO.svelte';
   export let data;
   
   console.log('📄 Projet detail page - data received:', data);
@@ -16,7 +17,25 @@
       return '';
     }).join(' ');
   }
+  
+  // Fonction pour extraire le texte de la description
+  function extractDescriptionText(blocks) {
+    if (!blocks || !Array.isArray(blocks)) return '';
+    
+    return blocks.map(block => {
+      if (block.type === 'paragraph' && block.children) {
+        return block.children.map(child => child.text || '').join('');
+      }
+      return '';
+    }).join(' ').substring(0, 160); // Limiter à 160 caractères pour la meta description
+  }
 </script>
+
+<SEO 
+	title={data?.project?.nom || 'Projet - Territoires Sensibles'}
+	description={extractDescriptionText(data?.project?.description) || data?.project?.caracteristiques || ''}
+	favicon={data?.site?.seo_favicon?.url || ''}
+/>
 
 
 <p class="project_menu_title">{data.project.nom}</p>
@@ -79,10 +98,10 @@
 
 .project_menu_title {
   position: fixed;
-  top: 38px;
+  top: 30px;
   right: 115px;
   font-size: $font-size-xl;
-
+  transition: opacity 0.3s ease;
 }
 
 .project {
@@ -158,7 +177,7 @@
 
 .retour {
   position: absolute;
-    right: 32px;
+    right: 30px;
     top: 120px;
 }
 
@@ -210,6 +229,137 @@
   color: $color-primary;
 
 }
+
+@media (max-width: 991px) {
+  .project_menu_title {
+    display: none;
+  }
+
+  .retour {
+    right: 15px;
+  }
+  
+  .project {
+    padding: 180px 20px 120px 20px;
+    
+    h1 {
+      font-size: $font-size-xl;
+    }
+    
+    .characteristics {
+      font-size: $font-size-md;
+    }
+    
+    .description {
+      font-size: $font-size-md;
+    }
+    
+    .credits {
+      p {
+        font-size: $font-size-sm;
+      }
+    }
+    
+    .infos {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      
+      .infos_label {
+        width: auto;
+        font-size: $font-size-md;
+      }
+    }
+    
+    .tags {
+      flex-direction: column;
+      gap: 15px;
+      
+      .tags_label {
+        width: auto;
+        font-size: $font-size-md;
+      }
+      
+      .tags_container {
+        flex-direction: row;
+      }
+    }
+  }
+
+  .retour {
+    font-size: $font-size-sm;
+  }
+  
+
+}
+
+// Tablette (768px - 1024px)
+@media (max-width: 991px) and (min-width: 768px) {
+  .project {
+    padding: 120px 15px 140px 15px;
+    
+    h1 {
+      font-size: $font-size-xl;
+    }
+    
+    .characteristics {
+      font-size: $font-size-lg;
+    }
+    
+    .description {
+      font-size: $font-size-lg;
+    }
+  }
+}
+
+// Smartphone (jusqu'à 767px)
+@media (max-width: 768px) {
+  .project {
+    padding: 120px 15px 120px 15px;
+    
+    h1 {
+      font-size: $font-size-lg;
+      margin-bottom: 10px;
+    }
+    
+    .characteristics {
+      font-size: $font-size-sm;
+      margin-bottom: 20px;
+    }
+    
+    .description {
+      font-size: $font-size-sm;
+      margin: 20px 0;
+    }
+    
+    .credits {
+      margin: 20px 0;
+      
+      p {
+        font-size: 14px;
+      }
+    }
+    
+    .tags {
+      margin-top: 20px;
+      
+      .tags_label {
+        font-size: $font-size-sm;
+      }
+      
+      .tag {
+        font-size: $font-size-sm;
+        padding: 4px 20px;
+      }
+    }
+  }
+  
+  
+  .button-outline {
+    font-size: $font-size-sm;
+  }
+}
+
 
 
 </style> 

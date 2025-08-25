@@ -6,11 +6,13 @@ export const load = async () => {
   
   try {
     const actualiteesRes = await fetchStrapi('/actualitees?populate=*');
+    const siteRes = await fetchStrapi('/site?populate=*');
     console.log('📥 Load function - actualiteesRes:', actualiteesRes);
     console.log('📊 Load function - actualiteesRes.data:', actualiteesRes.data);
     
     const result = {
-      actualitees: actualiteesRes.data || []
+      actualitees: actualiteesRes.data || [],
+      site: siteRes.data || {}
     };
     
     console.log('✅ Load function - returning:', result);
@@ -18,7 +20,8 @@ export const load = async () => {
   } catch (error) {
     console.error('❌ Error loading actualites:', error);
     return {
-      actualitees: []
+      actualitees: [],
+      site: {}
     };
   }
 }; 

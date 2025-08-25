@@ -7,6 +7,7 @@ export const load = async () => {
   try {
     const membresRes = await fetchStrapi('/membres?populate=*');
     const nousRes = await fetchStrapi('/nous');
+    const siteRes = await fetchStrapi('/site?populate=*');
     
     console.log('📥 Load function - membresRes:', membresRes);
     console.log('📥 Load function - membresRes.data:', membresRes.data);
@@ -15,7 +16,8 @@ export const load = async () => {
     
     const result = {
       membres: membresRes.data || [],
-      nous: nousRes.data || {}
+      nous: nousRes.data || {},
+      site: siteRes.data || {}
     };
     
     console.log('✅ Load function - returning:', result);
@@ -24,7 +26,8 @@ export const load = async () => {
     console.error('❌ Error loading nous:', error);
     return {
       membres: [],
-      nous: {}
+      nous: {},
+      site: {}
     };
   }
 }; 

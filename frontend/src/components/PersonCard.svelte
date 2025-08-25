@@ -69,7 +69,7 @@
 
 .person_name {
   font-size: $font-size-xl;
-   margin: 15px 0 30px 0;
+   margin: 15px 0 5px 0;
 }
 
     .person_description {
@@ -109,6 +109,15 @@
 @media (max-width: 768px) {
   .person_image {
     height: 60vw;
+  }
+  .person_name {
+    font-size: $font-size-lg;
+  }
+  .person_description {
+    font-size: $font-size-sm;
+  }
+  .button-outline {
+    font-size: $font-size-sm;
   }
 }
 </style> 

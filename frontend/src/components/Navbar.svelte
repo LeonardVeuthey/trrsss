@@ -29,10 +29,48 @@
   
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
+    
+    // Cacher/montrer navbar-content
+    const navbarContent = document.querySelector('.navbar-content');
+    if (navbarContent) {
+      if (isMenuOpen) {
+        navbarContent.style.opacity = '0';
+        navbarContent.style.pointerEvents = 'none';
+      } else {
+        navbarContent.style.opacity = '1';
+        navbarContent.style.pointerEvents = 'auto';
+      }
+    }
+    
+    // Cacher/montrer project_menu_title
+    const projectMenuTitle = document.querySelector('.project_menu_title');
+    if (projectMenuTitle) {
+      if (isMenuOpen) {
+        projectMenuTitle.style.opacity = '0';
+        projectMenuTitle.style.pointerEvents = 'none';
+      } else {
+        projectMenuTitle.style.opacity = '1';
+        projectMenuTitle.style.pointerEvents = 'auto';
+      }
+    }
   }
   
   function closeMenu() {
     isMenuOpen = false;
+    
+    // Remontrer navbar-content
+    const navbarContent = document.querySelector('.navbar-content');
+    if (navbarContent) {
+      navbarContent.style.opacity = '1';
+      navbarContent.style.pointerEvents = 'auto';
+    }
+    
+    // Remontrer project_menu_title
+    const projectMenuTitle = document.querySelector('.project_menu_title');
+    if (projectMenuTitle) {
+      projectMenuTitle.style.opacity = '1';
+      projectMenuTitle.style.pointerEvents = 'auto';
+    }
   }
 </script>
 
@@ -62,19 +100,18 @@
     
     <!-- Menu déroulant -->
     {#if isMenuOpen}
-      <div class="menu-overlay" on:click={closeMenu}></div>
       <div class="menu-dropdown">
         <div class="menu-dropdown_wrapper">
-        <button class="menu-close" on:click={closeMenu} aria-label="Fermer">
-          <span class="close-icon">×</span>
-        </button>
+        <div class="menu-close" on:click={closeMenu} aria-label="Fermer le menu">
+          ×
+        </div>
         <div class="menu-links">
           <a href="/carte" on:click={closeMenu}>Carte</a>
           <a href="/projets" on:click={closeMenu}>Projets</a>
           <a href="/nous" on:click={closeMenu}>Nous</a>
-            <a href="/actualites" on:click={closeMenu}>Actualités</a>
-          </div>
+          <a href="/actualites" on:click={closeMenu}>Actualités</a>
         </div>
+      </div>
       </div>
     {/if}
   {/if}
@@ -104,7 +141,7 @@
 }
 
 .navbar-logo {
-  height: 63px;
+  height: 50px;
   flex-shrink: 0;
   
   img {
@@ -123,7 +160,6 @@
     color: $color-primary;
     text-decoration: none;
     font-family: $font-main;
-    font-weight: 500;
     transition: opacity 0.2s ease;
     
     &:hover {
@@ -137,6 +173,7 @@
   align-items: center;
   gap: 20px;
   margin-left: auto;
+  transition: opacity 0.3s ease;
 }
 
 .page-title {
@@ -180,23 +217,11 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: 300px;
-  height: 500px;
-  padding: 15px;
+  padding: 30px;
   z-index: 99;
 
 }
 
-.menu-dropdown_wrapper {
-  background: white;
-  border-left: 1px solid $color-primary;
-  position: relative;
-
-  padding: 30px 30px 60px;
-  box-sizing: border-box;
-  animation: slideIn 0.3s ease;
-  border-radius: 30px;
-}
 
 @keyframes slideIn {
   from {
@@ -208,26 +233,18 @@
 }
 
 .menu-close {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  background: none;
-  border: none;
+  display: none !important;
   cursor: pointer;
   font-size: 55px;
   color: $color-primary;
   padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .menu-links {
-  margin-top: 80px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: end;
+  justify-content: end;
   gap: 15px;
   
   a {
@@ -235,9 +252,7 @@
     text-decoration: none;
     font-family: $font-main;
     font-size: $font-size-xl;
-    font-weight: 500;
     transition: opacity 0.2s ease;
-    line-height: 1;
     
     &:hover {
       opacity: 0.7;
@@ -246,22 +261,78 @@
 }
 
 // Responsive design
-@media (max-width: 768px) {
+@media (max-width: 991px) {
+
   .navbar {
-    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .navbar-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 0px;
+  }
+
+  .menu-close {
+    display: flex !important;
+    height: 37px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  .menu-links {
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 0;
+    line-height: 1.2;
+  }
+
+  .navbar {
+    padding: 15px;
   }
   
   .navbar-logo {
-    width: 80px;
-    height: 80px;
+    height: 40px;
   }
   
   .page-title {
     font-size: $font-size-lg;
   }
-  
+
   .menu-dropdown {
+    padding: 15px;
+  }
+  
+  .menu-dropdown_wrapper {
+    background-color: white;
+    border-radius: 30px;
+    border: 1px solid $color-primary;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
     width: 100%;
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-menu {
+    font-size: $font-size-lg;
+  }
+}
+
+@media (max-width: 479px) {
+  .page-title {
+    display: none;
   }
 }
 </style> 
