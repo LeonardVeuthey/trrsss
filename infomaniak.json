@@ -2,14 +2,20 @@
   "name": "trrsss",
   "type": "nodejs",
   "build": {
-    "command": "npm install && npm run build",
-    "output": "frontend/build"
+    "command": "bash scripts/deploy-infomaniak.sh",
+    "output": "backend/dist"
   },
   "deploy": {
-    "source": "frontend/build",
+    "source": "backend/dist",
     "destination": "/"
   },
   "environment": {
     "NODE_ENV": "production"
+  },
+  "start": {
+    "command": "npm start"
+  },
+  "install": {
+    "command": "npm run postinstall"
   }
 }
